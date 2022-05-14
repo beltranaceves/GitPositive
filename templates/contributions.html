@@ -1,0 +1,43 @@
+Hello! {{username}} <a href="{{ url_for("user") }}">Get user</a> 
+<a href="{{ url_for("repo") }}">Get repo</a> 
+<a href="{{ url_for("logout") }}">Logout</a>
+
+<!-- Optionally, include the theme (if you don't want to struggle to write the CSS) -->
+<link
+   rel="stylesheet"
+   href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css"
+/>
+
+<!-- Prepare a container for your calendar. -->
+<div class="calendar">
+    <!-- Loading stuff -->
+    Loading the data just for you.
+</div>
+
+<!-- Include the library. -->
+<script
+  src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"
+></script>
+<script defer>
+    // or enable responsive functionality
+    GitHubCalendar(".calendar", "{{username}}", { responsive: true }).then(() => {
+      // Set loading animation here
+
+    fetch("https://world.openfoodfacts.org/category/pastas/1.json")
+  .then(response => {
+    if (!response.ok) {
+      // Show error in page
+      throw new Error(`Request failed with status ${reponse.status}`)
+    }
+    return response.json()
+  })
+  .then(data => {
+    // Modigy contribution calendar
+    console.log(data.count)
+    console.log(data.products)
+  })
+  .catch(error => console.log(error))
+      
+    });
+</script>
+            

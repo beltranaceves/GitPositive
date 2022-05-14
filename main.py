@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, request, g, session, redirect, url_for
-from flask import render_template_string, jsonify
+from flask import render_template_string, render_template, jsonify
 from flask_github import GitHub
 
 from sqlalchemy import create_engine, Column, Integer, String, MetaData, Table
@@ -17,6 +17,8 @@ app = Flask(__name__)
 #Setup app config for GitHub login
 app.config['GITHUB_CLIENT_ID'] = os.environ['GITHUB_CLIENT_ID']
 app.config['GITHUB_CLIENT_SECRET'] = os.environ['GITHUB_CLIENT_SECRET']
+app.secret_key = os.environ['GITHUB_CLIENT_ID']
+app.config['SESSION_TYPE'] = 'filesystem'
 
 github = GitHub(app)
 
@@ -63,10 +65,7 @@ def after_request(response):
 @app.route('/')
 def index():
     if g.user:
-        t = 'Hello! %s <a href="{{ url_for("user") }}">Get user</a> ' \
-            '<a href="{{ url_for("repo") }}">Get repo</a> ' \
-            '<a href="{{ url_for("logout") }}">Logout</a>'
-        t %= g.user.github_login
+        return render_template('contributions.html', username = g.user.github_login)
     else:
         t = 'Hello! <a href="{{ url_for("login") }}">Login</a>'
 
