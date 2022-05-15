@@ -1,25 +1,30 @@
-import requests
+import datetime
+from dateutil.relativedelta import relativedelta
 
-def getRepositoriesByUsername(username):
-    url = f'https://api.github.com/users/{username}/repos'
-    response = requests.get(url)
-    return response.json()
+def getRepoNameFromUrl(url):
+    return url["name"]
 
-def getCommitsByRepositoryUrl(repoUrl) :
-    url = f'{repoUrl}/commits'
-    response = requests.get(url)
-    return response.json()
+def getRepositoriesByUsername(user, github):
+    url = f'/users/{user.github_login}/repos'
+    repos = github.get(url)
+    repos = list(map(getRepoNameFromUrl, repos))
+    return repos
 
-def getCommitsByUsernameAndYear(username, year):
-    repositories = getRepositoriesByUsername(username)
+def getCommitsByRepositoryUrl(repoName, user, github) :
+    url = f'/repos/{user.github_login}/{repoName}/commits'
+    yearAgo = datetime.datetime.now() - relativedelta(years=1)
+  
+    commits = github.get(url, params = {'author': user.github_login, 'since': yearAgo, 'per_page': 100, 'page': 1})  
+    totalCommits = commits
+    page = 2
+    while commits != []:
+      commits = github.get(url, params = {'author': user.github_login, 'since': yearAgo, 'per_page': 100, 'page': page})
+      totalCommits += commits
+    return totalCommits
+
+def getCommitsByUsernameAndYear(user, github):
+    repositoryNames = getRepositoriesByUsername(user, github)
     commits = []
-    print(repositories)
-    for repository in repositories:
-      repositoryCommits = getCommitsByRepositoryUrl(repository["url"])
-      #Filter them by year
-      for repositoryCommit in repositoryCommits:
-        commitDate = repositoryCommit["commit"]["author"]["date"]
-        commitYear = commitDate.split("-")[0]
-        if commitYear == year:  
-          commits.append(repositoryCommit)
+    for repositoryName in repositoryNames:
+      commits += getCommitsByRepositoryUrl(repositoryName, user, github)
     return commits

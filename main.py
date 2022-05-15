@@ -71,6 +71,17 @@ def index():
 
     return render_template_string(t)
 
+@app.route('/contributions')
+def contributions():
+    # Handle error when g.user is not logged in
+    emailInfos = github.get('/user/emails')
+    emails = []
+    for emailInfo in emailInfos:
+        emails.append(emailInfo['email'])
+    g.user.github_emails = emails
+    commits = getCommitsByUsernameAndYear(g.user, github)
+    return jsonify(commits)
+
 
 @github.access_token_getter
 def token_getter():
@@ -99,7 +110,8 @@ def authorized(access_token):
     github_user = github.get('/user')
     user.github_id = github_user['id']
     user.github_login = github_user['login']
-
+    user.github_name = github_user['name']
+  
     db_session.commit()
 
     session['user_id'] = user.id
@@ -109,7 +121,7 @@ def authorized(access_token):
 @app.route('/login')
 def login():
     if session.get('user_id', None) is None:
-        return github.authorize()
+        return github.authorize(scope="user:email")
     else:
         return 'Already logged in'
 
