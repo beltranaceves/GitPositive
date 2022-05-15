@@ -4,6 +4,12 @@ from dateutil.relativedelta import relativedelta
 def getRepoNameFromUrl(url):
     return url["name"]
 
+def simplifyCommit(commit):
+    simple = {}
+    simple['message'] = commit['commit']['message']
+    simple['date'] = commit['commit']['author']['date']
+    return simple
+
 def getRepositoriesByUsername(user, github):
     url = f'/users/{user.github_login}/repos'
     repos = github.get(url)
@@ -27,4 +33,5 @@ def getCommitsByUsernameAndYear(user, github):
     commits = []
     for repositoryName in repositoryNames:
       commits += getCommitsByRepositoryUrl(repositoryName, user, github)
-    return commits
+    commits = list(map(simplifyCommit, commits))
+    return commits + [{'total': len(commits)}]
