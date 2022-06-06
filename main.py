@@ -85,12 +85,6 @@ def index():
 @app.route('/contributions')
 def contributions():
     # Handle error when g.user is not logged in
-    emailInfos = github.get('/user/emails')
-    emails = []
-    for emailInfo in emailInfos:
-        emails.append(emailInfo['email'])
-    g.user.github_emails = emails
-  
     commits = getCurrentUserCommits()
     commit_count = commits.pop()
     analyzed_commits = analyzeCommits(commits)
