@@ -90,8 +90,9 @@ def contributions():
     for emailInfo in emailInfos:
         emails.append(emailInfo['email'])
     g.user.github_emails = emails
-    commits = getCommitsByUsernameAndYear(g.user, github)
-    return jsonify(commits)
+    #commits = getCommitsByUsernameAndYear(g.user, github)
+    #return jsonify(commits)
+    return render_template('analisis.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = 9999)
 
 
 @github.access_token_getter
