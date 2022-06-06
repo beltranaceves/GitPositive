@@ -22,21 +22,10 @@ Hello! {{username}} <a href="{{ url_for("user") }}">Get user</a>
     // or enable responsive functionality
     GitHubCalendar(".calendar", "{{username}}", { responsive: true }).then(() => {
       // Set loading animation here
-
-    fetch("https://world.openfoodfacts.org/category/pastas/1.json")
-  .then(response => {
-    if (!response.ok) {
-      // Show error in page
-      throw new Error(`Request failed with status ${reponse.status}`)
-    }
-    return response.json()
-  })
-  .then(data => {
-    // Modigy contribution calendar
-    console.log(data.count)
-    console.log(data.products)
-  })
-  .catch(error => console.log(error))
+      {% if commits is defined and commits %}
+      var myVariable = {{ commits | tojson }};
+      console.log(myVariable)
+      {% endif %}
       
     });
 </script>

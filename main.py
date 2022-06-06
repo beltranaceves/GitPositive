@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, request, g, session, redirect, url_for
 from flask import render_template_string, render_template, jsonify
+from flask_cors import CORS
 from flask_github import GitHub
 
 from sqlalchemy import create_engine, Column, Integer, String, MetaData, Table
@@ -13,7 +14,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from services.githubApiService import getCommitsByUsernameAndYear
 
 app = Flask(__name__)
-
+CORS(app)
 #Setup app config for GitHub login
 app.config['GITHUB_CLIENT_ID'] = os.environ['GITHUB_CLIENT_ID']
 app.config['GITHUB_CLIENT_SECRET'] = os.environ['GITHUB_CLIENT_SECRET']
@@ -32,10 +33,18 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-
+#TODO: research "already logged in" bug, maybe forze a logout and re-entry
 def init_db():
     Base.metadata.create_all(bind=engine)
 
+def getCurrentUserCommits():
+  emailInfos = github.get('/user/emails')
+  emails = []
+  for emailInfo in emailInfos:
+      emails.append(emailInfo['email'])
+  g.user.github_emails = emails
+  commits = getCommitsByUsernameAndYear(g.user, github)
+  return commits
   
 class User(Base):
     __tablename__ = 'users'
@@ -59,17 +68,19 @@ def before_request():
 @app.after_request
 def after_request(response):
     db_session.remove()
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:8080')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
 
 
 @app.route('/')
 def index():
     if g.user:
-        return render_template('contributions.html', username = g.user.github_login)
+        return render_template('calendar.html', username = g.user.github_login)
     else:
-        t = 'Hello! <a href="{{ url_for("login") }}">Login</a>'
-
-    return render_template_string(t)
+        return render_template('index.html')
 
 @app.route('/contributions')
 def contributions():
@@ -116,14 +127,14 @@ def authorized(access_token):
 
     session['user_id'] = user.id
     return redirect(next_url)
-
-
+  
 @app.route('/login')
 def login():
     if session.get('user_id', None) is None:
         return github.authorize(scope="user:email")
     else:
-        return 'Already logged in'
+        # Handle error when g.user is not logged in
+        return render_template('calendar.html', username = g.user.github_login)
 
 
 @app.route('/logout')
