@@ -1,17 +1,17 @@
 import os
 
 from flask import Flask, request, g, session, redirect, url_for
-from flask import render_template_string, render_template, jsonify
+from flask import render_template, jsonify
 from flask_cors import CORS
 from flask_github import GitHub
 
-from sqlalchemy import create_engine, Column, Integer, String, MetaData, Table
+from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-from services.githubApiService import getCommitsByUsernameAndYear
+from services.githubApiService import getCommitsByUsername
+from services.sentimentService import analyzeCommits
 
 app = Flask(__name__)
 CORS(app)
@@ -43,7 +43,7 @@ def getCurrentUserCommits():
   for emailInfo in emailInfos:
       emails.append(emailInfo['email'])
   g.user.github_emails = emails
-  commits = getCommitsByUsernameAndYear(g.user, github)
+  commits = getCommitsByUsername(g.user, github)
   return commits
   
 class User(Base):
@@ -78,7 +78,7 @@ def after_request(response):
 @app.route('/')
 def index():
     if g.user:
-        return render_template('calendar.html', username = g.user.github_login)
+        return render_template('dashboard.html', username = g.user.github_login)
     else:
         return render_template('index.html')
 
@@ -90,9 +90,12 @@ def contributions():
     for emailInfo in emailInfos:
         emails.append(emailInfo['email'])
     g.user.github_emails = emails
-    #commits = getCommitsByUsernameAndYear(g.user, github)
-    #return jsonify(commits)
-    return render_template('analisis.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = 9999)
+  
+    commits = getCurrentUserCommits()
+    commit_count = commits.pop()
+    analyzed_commits = analyzeCommits(commits)
+  
+    return render_template('contributions.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = commit_count["total"], commits = analyzed_commits)
 
 
 @github.access_token_getter
@@ -135,7 +138,7 @@ def login():
         return github.authorize(scope="user:email")
     else:
         # Handle error when g.user is not logged in
-        return render_template('calendar.html', username = g.user.github_login)
+        return render_template('dashboard.html', username = g.user.github_login)
 
 
 @app.route('/logout')

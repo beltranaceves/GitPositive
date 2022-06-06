@@ -28,7 +28,7 @@ def getCommitsByRepositoryUrl(repoName, user, github) :
       totalCommits += commits
     return totalCommits
 
-def getCommitsByUsernameAndYear(user, github):
+def getCommitsByUsername(user, github):
     repositoryNames = getRepositoriesByUsername(user, github)
     commits = []
     for repositoryName in repositoryNames:
