@@ -10,7 +10,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
-from services.githubApiService import getCommitsByUsername
+from services.githubApiService import getCommitsByUsername, getRepositoryCountByUsername
 from services.sentimentService import analyzeCommits
 
 app = Flask(__name__)
@@ -46,6 +46,15 @@ def getCurrentUserCommits():
   commits = getCommitsByUsername(g.user, github)
   return commits
   
+def getCurrentUserCount():
+  emailInfos = github.get('/user/emails')
+  emails = []
+  for emailInfo in emailInfos:
+      emails.append(emailInfo['email'])
+  g.user.github_emails = emails
+  repo_count = getRepositoryCountByUsername(g.user, github)
+  return repo_count
+  
 class User(Base):
     __tablename__ = 'users'
 
@@ -78,7 +87,8 @@ def after_request(response):
 @app.route('/')
 def index():
     if g.user:
-        return render_template('dashboard.html', username = g.user.github_login)
+        repo_count = getCurrentUserCount()
+        return render_template('dashboard.html', username = g.user.github_login, repo_count = repo_count)
     else:
         return render_template('index.html')
 

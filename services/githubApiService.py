@@ -37,3 +37,7 @@ def getCommitsByUsername(user, github):
       commits += getCommitsByRepositoryUrl(repositoryName, user, github)
     commits = list(map(simplifyCommit, commits))
     return commits + [{'total': len(commits)}]
+
+def getRepositoryCountByUsername(user, github):
+    repositoryNames = getRepositoriesByUsername(user, github)
+    return len(repositoryNames)

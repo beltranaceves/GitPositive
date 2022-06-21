@@ -3039,6 +3039,14 @@
             min-height: 1em;
         }
 
+        p.style4 {
+              color: rgba(255, 255, 255, 0.588);
+              font-family: 'Inter', sans-serif;
+              font-size: 1em;
+              line-height: 1.875;
+              font-weight: 400;
+          }
+
         #huntr-react-container-2 .ql-snow.ql-toolbar button svg,
         #huntr-react-container-2 .ql-snow .ql-toolbar button svg {
             float: left;
@@ -4610,6 +4618,7 @@
                                 <h1 id="text01" class="style2" style="opacity: 1; transform: none;">{{username}}</h1>
                             </div>
                             <div>
+                                <p id="text16" class="style4" style="opacity: 1;">{{repo_count}} repositories found.</p>
                                 <ul onclick="getCommits()" id="buttons01" class="style1 buttons" style="opacity: 1; transform: none;">
                                     <li><a href="{{ url_for("contributions") }}" class="button n01"><svg>
                                                 <use xlink:href="#icon-b61"></use>
@@ -5429,7 +5438,8 @@
                 stagger: 125,
                 replay: false
             });
-            onvisible.add('.image.style1', {
+      
+            onvisible.add('.image.style1, p.style4', {
                 style: 'zoom-in',
                 speed: 1000,
                 intensity: 5,
