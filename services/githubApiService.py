@@ -1,8 +1,11 @@
 import datetime
 from dateutil.relativedelta import relativedelta
 
-def getRepoNameFromUrl(url):
+def getRepoNameFromDict(url):
     return url["name"]
+
+def getRepoUrlFromDict(url):
+    return url["url"]
 
 def simplifyCommit(commit):
     simple = {}
@@ -10,14 +13,20 @@ def simplifyCommit(commit):
     simple['date'] = commit['commit']['author']['date']
     return simple
 
-def getRepositoriesByUsername(user, github):
+def getRepositoriesByUsername2(user, github):
     url = f'/users/{user.github_login}/repos'
     repos = github.get(url)
-    repos = list(map(getRepoNameFromUrl, repos))
+    repos = list(map(getRepoNameFromDict, repos))
     return repos
 
-def getCommitsByRepositoryUrl(repoName, user, github) :
-    url = f'/repos/{user.github_login}/{repoName}/commits'
+def getRepositoriesByUsername(user, github):
+    url = f'/user/repos'
+    repos = github.get(url)
+    repoUrls = list(map(getRepoUrlFromDict, repos))
+    return repoUrls
+
+def getCommitsByRepositoryUrl(repoUrl, user, github) :
+    url = repoUrl + "/commits"
     yearAgo = datetime.datetime.now() - relativedelta(years=1)
 
     totalCommits = []
@@ -27,14 +36,17 @@ def getCommitsByRepositoryUrl(repoName, user, github) :
       page = 2
       while commits != []:
         commits = github.get(url, params = {'author': user.github_login, 'since': yearAgo, 'per_page': 100,         'page': page})
+        page += 1
         totalCommits += commits
     return totalCommits
 
 def getCommitsByUsername(user, github):
-    repositoryNames = getRepositoriesByUsername(user, github)
+    repositoryUrls = getRepositoriesByUsername(user, github)
     commits = []
-    for repositoryName in repositoryNames:
-      commits += getCommitsByRepositoryUrl(repositoryName, user, github)
+    for repositoryUrl in repositoryUrls:
+      new_commits = getCommitsByRepositoryUrl(repositoryUrl, user, github)
+      if new_commits != []:
+        commits += new_commits
     commits = list(map(simplifyCommit, commits))
     return commits + [{'total': len(commits)}]
 

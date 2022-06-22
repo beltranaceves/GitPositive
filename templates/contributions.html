@@ -21,6 +21,9 @@
     <link href="{{ url_for('static', filename='css/contributions.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/design.css') }}" />
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/github_contribution.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/github_contribution_graph.css') }}" media="all" rel="stylesheet" />
     <style>
         html,
         body,
@@ -601,6 +604,13 @@
             font-family: 'Inter', sans-serif;
             font-size: 1em;
             line-height: 1.875;
+            font-weight: 400;
+        }
+
+        li.calendar-li {
+            color: rgba(255, 255, 255, 0.588);
+            font-family: 'Inter', sans-serif;
+            font-size: large;
             font-weight: 400;
         }
 
@@ -5148,64 +5158,51 @@
                             <div id="image01" class="style1 image" style="opacity: 1; transform: none;"><span
                                     class="frame"><img src="https://github.com/{{username}}.png" alt=""></span></div>
                             <h2 id="text03" class="style2" style="opacity: 1; transform: none;">{{username}}</h2>
+                          <!--  
                             <p id="text10" class="style3" style="opacity: 1; transform: none;">{{title}}</p>
                             <p id="text04" class="style4" style="opacity: 1;">{{ trait_desc }}
+                          -->
                             </p>
-                            <p id="text09" class="style4" style="opacity: 1;"><span class="p">Only repositories you own
-                                    are analyzed.<br> {{commit_count}} Commits.</span></p>
+                            <p id="text09" class="style4" style="opacity: 1;"><span class="p">{{commit_count}} Commits Analyzed.</span></p>
                         </div>
                     </div>
                 </div>
                 <hr id="divider01" class="style1">
                 <div id="container03" class="style5 container default">
                     <div class="wrapper">
-                        <div class="inner" data-onvisible-trigger="1">
+                        <div class="inner calendar-container" data-onvisible-trigger="1">
                           <div class="graph">
-      <ul class="months">
-        <li>Jan</li>
-        <li>Feb</li>
-        <li>Mar</li>
-        <li>Apr</li>
-        <li>May</li>
-        <li>Jun</li>
-        <li>Jul</li>
-        <li>Aug</li>
-        <li>Sep</li>
-        <li>Oct</li>
-        <li>Nov</li>
-        <li>Dec</li>
-      </ul>
-      <ul class="days">
-        <li>Sun</li>
-        <li>Mon</li>
-        <li>Tue</li>
-        <li>Wed</li>
-        <li>Thu</li>
-        <li>Fri</li>
-        <li>Sat</li>
-      </ul>
-      <ul class="squares">
-        {% for i in range(1,366)  %}
-            {% if commits[1][i] %}
-                <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="{{commits[1][i]}} on {{commits[0][i]}}" data-level="{{commits[2][i]}}"></li>
-            {% else %}
-                <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="No Contribution on {{commits[0][i]}}" data-level="{{commits[2][i]}}"></li>
-            {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
-    <div class="contributeLegend">
-      <p class="legendTitle">Legend</p>
-      <ul class="legendSquares">
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="No Contribution"></li>
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="Less than 2 Contributions" data-level="1"></li>
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="Less than 4 Contributions" data-level="2"></li>
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="More than 4 Contributions" data-level="3"></li>
-      </ul>
-    </div>
+                            <div id="your_graph"></div>
+                             <script>
+                                var date = new Date();
+                                date.setFullYear( date.getFullYear() - 1 );
+                                var list_of_timestamp = {{ commits |tojson }};
+                                $('#your_graph').github_graph( {
+                                  // start from 2022, null is default
+                                  start_date: date,
+                                  data: list_of_timestamp ,
+                                  // single text and plural text
+                                  texts: ['No contributions','contributions'],
+                                  //override colours
+                                  colors:['gray', '#f72b2b','#ffafbd','#0079f2','#c6e48b','#196127'],
+                                  /** List object of color and count also supported
+                                  colors:[
+                                    { count:0, color:'gray' },
+                                    { count:5, color:'purple' },
+                                    { count:10, color:'yellow' },
+                                    { count:15, color:'green' },
+                                    { count:20, color:'red' }
+                                  ],
+                                  **/
+                                  click: function(date, count) {
+                                    console.log(date, count);
+                                  },
+                                });
+                            </script>
+                          </div>
                         </div>
                     </div>
-                </div>
+                </div><!-- I am a comment!
                 <hr id="divider02" class="style1">
                 <div id="container01" class="style6 container default">
                     <div class="wrapper">
@@ -5229,6 +5226,7 @@
                         </div>
                     </div>
                 </div>
+               -->
                 <hr id="divider03" class="style1">
                 <div id="container05" class="style1 container default">
                     <div class="wrapper">

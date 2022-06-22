@@ -1,3 +1,6 @@
+.calendar-container {
+  overflow: auto;
+}
 /* cyrillic-ext */
 @font-face {
   font-family: 'Inter';

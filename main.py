@@ -94,12 +94,15 @@ def index():
 
 @app.route('/contributions')
 def contributions():
-    # Handle error when g.user is not logged in
-    commits = getCurrentUserCommits()
-    commit_count = commits.pop()
-    analyzed_commits = analyzeCommits(commits)
-  
-    return render_template('contributions.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = commit_count["total"], commits = analyzed_commits)
+    if g.user:
+      # Handle error when g.user is not logged in
+      commits = getCurrentUserCommits()
+      commit_count = commits.pop()
+      analyzed_commits = analyzeCommits(commits)
+    
+      return render_template('contributions.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = commit_count["total"], commits = analyzed_commits)
+    else:
+      return render_template('index.html')
 
 
 @github.access_token_getter
@@ -138,11 +141,11 @@ def authorized(access_token):
   
 @app.route('/login')
 def login():
-    if session.get('user_id', None) is None:
-        return github.authorize(scope="user:email")
+    if session.get('user_id', None) is None or g.user is None:
+        return github.authorize(scope="user:email, repo")
     else:
-        # Handle error when g.user is not logged in
-        return render_template('dashboard.html', username = g.user.github_login)
+        repo_count = getCurrentUserCount()
+        return render_template('dashboard.html', username = g.user.github_login, repo_count = repo_count)
 
 
 @app.route('/logout')
