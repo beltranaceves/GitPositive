@@ -133,7 +133,7 @@ if (!String.prototype.formatString) {
               var color = getColor( count );
 
               var y = start_date.getDay() * step;
-              item_html += '<rect class="day" width="13" height="13" y="'+ y +'" fill="'+ color + '" data-count="'+ count +'" data-date="'+ data_date +'" rx="'+radius+'" ry="'+radius+'"/>';  
+              item_html += '<rect class="day" width="20" height="20" y="'+ y +'" fill="'+ color + '" data-count="'+ count +'" data-date="'+ data_date +'" rx="'+radius+'" ry="'+radius+'"/>';  
 
               if(start_date.getDay() == 6) {
                   item_html += "</g>";

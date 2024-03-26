@@ -77,7 +77,7 @@ def before_request():
 @app.after_request
 def after_request(response):
     db_session.remove()
-    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:8080')
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:81')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
@@ -161,7 +161,7 @@ def user():
 
 @app.route('/repo')
 def repo():
-    return jsonify(github.get('/repos/cenkalti/github-flask'))
+    return jsonify(github.get('/repos/beltranaceves/gitpositive'))
 
 
 if __name__ == '__main__':
