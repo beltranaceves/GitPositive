@@ -1,3 +1,4 @@
+python-dateutil
 vaderSentiment
 werkzeug == 2.2.2
 flask == 2.1.2
