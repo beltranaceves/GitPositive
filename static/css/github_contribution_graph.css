@@ -10,7 +10,8 @@ text.style4 {
   border-radius: 4px;
   margin-left: 90px;
   border-color: black;
-  border-width: 3px;
+  border-width: 0px;
+  background-image: linear-gradient(142deg, #8C51D6 0%, #DE8B5D 43%);
 }
 .svg-tip {
   padding: 10px;

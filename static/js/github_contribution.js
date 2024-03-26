@@ -100,7 +100,7 @@ if (!String.prototype.formatString) {
               start_date = new Date(settings.start_date);
           }
 
-          end_date = new Date(start_date);
+          let end_date = new Date(start_date);
           end_date.setMonth(end_date.getMonth() + 12);
           end_date.setDate(end_date.getDate() - 1);
 
