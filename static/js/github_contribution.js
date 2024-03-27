@@ -105,7 +105,7 @@ if (!String.prototype.formatString) {
           end_date.setDate(end_date.getDate() - 1);
 
           var loop_html = "";
-          var step = 25;
+          var step = 20;
 
           var month_position = [];
           month_position.push({month_index: start_date.getMonth(), x: 0 });
@@ -133,7 +133,7 @@ if (!String.prototype.formatString) {
               var color = getColor( count );
 
               var y = start_date.getDay() * step;
-              item_html += '<rect class="day" width="22" height="22" y="'+ y +'" fill="'+ color + '" data-count="'+ count +'" data-date="'+ data_date +'" rx="'+radius+'" ry="'+radius+'"/>';  
+              item_html += '<rect class="day" width="13" height="13" y="'+ y +'" fill="'+ color + '" data-count="'+ count +'" data-date="'+ data_date +'" rx="'+radius+'" ry="'+radius+'"/>';  
 
               if(start_date.getDay() == 6) {
                   item_html += "</g>";
