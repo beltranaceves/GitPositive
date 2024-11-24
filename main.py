@@ -7,7 +7,7 @@ from flask_github import GitHub
 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 
 from services.githubApiService import getCommitsByUsername, getRepositoryCountByUsername
@@ -24,7 +24,17 @@ app.config['SESSION_TYPE'] = 'filesystem'
 github = GitHub(app)
 
 # setup sqlalchemy
-DATABASE_URI = 'sqlite:////tmp/github-flask.db'
+
+# Get the application's root directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Create db directory under the main app directory
+DB_DIR = os.path.join(BASE_DIR, 'db')
+if not os.path.exists(DB_DIR):
+    os.makedirs(DB_DIR)
+
+# Set database path relative to app directory
+DATABASE_URI = f'sqlite:///{os.path.join(DB_DIR, "github-flask.db")}'
 engine = create_engine(DATABASE_URI)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
