@@ -5611,8 +5611,3 @@ body:after {
   cursor: default;
 }
 
-@font-face {
-  font-family: "simple-line-icons";
-  src: url("chrome-extension://mihdfbecejheednfigjpdacgeilhlmnf/assets/fonts/Simple-Line-Icons.ttf")
-    format("truetype");
-}

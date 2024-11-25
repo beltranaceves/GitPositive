@@ -1,4 +1,5 @@
 import os
+import datetime
 
 from flask import Flask, request, g, session, redirect, url_for
 from flask import render_template, jsonify
@@ -14,6 +15,7 @@ from services.githubApiService import getCommitsByUsername, getRepositoryCountBy
 from services.sentimentService import analyzeCommits
 
 app = Flask(__name__)
+app.debug = True
 CORS(app)
 #Setup app config for GitHub login
 app.config['GITHUB_CLIENT_ID'] = os.environ['GITHUB_CLIENT_ID']
@@ -63,6 +65,8 @@ def getCurrentUserCount():
       emails.append(emailInfo['email'])
   g.user.github_emails = emails
   repo_count = getRepositoryCountByUsername(g.user, github)
+  app.logger.info("WE WORK")
+  print(g)
   return repo_count
   
 class User(Base):
@@ -94,22 +98,39 @@ def after_request(response):
     return response
 
 
+def log_to_file(message):
+    with open('app.log', 'a') as f:
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        f.write(f'[{timestamp}] {message}\n')
+
+# Usage example:
 @app.route('/')
 def index():
+    return render_template('index.html')
     if g.user:
+        log_to_file(f"User {g.user.github_login} accessed homepage")
         repo_count = getCurrentUserCount()
         return render_template('dashboard.html', username = g.user.github_login, repo_count = repo_count)
     else:
         return render_template('index.html')
 
+cache_commits = None
+
 @app.route('/contributions')
 def contributions():
+    global cache_commits
     if g.user:
       # Handle error when g.user is not logged in
-      commits = getCurrentUserCommits()
+      if not cache_commits:
+        print("not using cache")
+        commits = getCurrentUserCommits()
+        cache_commits = commits
+      else:
+        print("using cache")
+        commits = cache_commits     
+    
       commit_count = commits.pop()
       analyzed_commits = analyzeCommits(commits)
-    
       return render_template('contributions.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = commit_count["total"], commits = analyzed_commits)
     else:
       return render_template('index.html')

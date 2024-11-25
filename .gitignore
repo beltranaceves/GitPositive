@@ -88,3 +88,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+github-flask.db
+db/
+db
+*.db
+db/github-flask.db
