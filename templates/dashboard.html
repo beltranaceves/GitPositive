@@ -19,10 +19,8 @@
     <link rel="canonical" href="https://logged.carrd.co/">
     <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
-    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet" type="text/css">
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>  
+    <link href="{{ url_for('static', filename='css/fonts.css') }}" rel="stylesheet" type="text/css">
 </head>
 
 <body class="is-ready vsc-initialized" data-new-gr-c-s-check-loaded="14.1062.0" data-gr-ext-installed="">
@@ -115,8 +113,6 @@
         </div>
     </div>
 </body>
-<script>
-    var g = {{ g|tojson }};
-    console.log(g);
-</script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </html>

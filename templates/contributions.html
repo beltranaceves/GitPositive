@@ -24,6 +24,8 @@
     <link href="{{ url_for('static', filename='css/github_contribution_graph.css') }}" media="all" rel="stylesheet" />
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contributions.css') }}" />
+    <link href="{{ url_for('static', filename='css/fonts.css') }}" rel="stylesheet" type="text/css">
 </head>
 
 <body class="is-ready vsc-initialized" data-new-gr-c-s-check-loaded="14.1062.0" data-gr-ext-installed="">
@@ -88,9 +90,20 @@
                                   start_date: date,
                                   data: list_of_timestamp ,
                                   // single text and plural text
-                                  texts: ['No contributions','contributions'],
+                                  texts: ['No sentiment data','sentiment'],
                                   //override colours
-                                  colors:['gray', '#f72b2b','#ffafbd','#0079f2','#c6e48b','#196127'],
+                                //   colors:['gray', '#f72b2b','#ffafbd','#0079f2','#c6e48b','#196127'],
+                                colors: [
+                                    '#eeeeee',  // Empty
+                                    '#695EE6',  // Very negative  
+                                    '#8B71E9',  // Slightly negative
+                                    '#AD84EC',  // Neutral
+                                    '#DE97E4',  // Slightly positive 
+                                    '#FF7A7A'   // Very positive
+                                    ],
+                                    border: {
+                                        hover_color: "#ffffff"
+                                    },
                                   /** List object of color and count also supported
                                   colors:[
                                     { count:0, color:'gray' },

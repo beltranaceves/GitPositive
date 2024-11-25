@@ -1,4 +1,24 @@
-/* text.style4 {
+.js-calendar-graph-svg {
+    /* transform: scale(1.3); */
+    transform-origin: left center;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+/* Desktop */
+@media screen and (min-width: 768px) {
+    .js-calendar-graph-svg {
+        transform: scale(1.35) translate(-85px, 0px);
+    }
+}
+
+/* Mobile */
+@media screen and (max-width: 767px) {
+    /* .js-calendar-graph-svg {
+        transform: scale(0.7);
+    } */
+}
+text.style4 {
   color: rgba(255, 255, 255, 0.588);
   font-family: 'Inter', sans-serif;
   font-size: 0.5em;
@@ -6,12 +26,12 @@
   font-weight: 400;
 }
 .graph {
-  background-color: aliceblue;
+  background-color: #2f3340;
   border-radius: 4px;
   margin-left: 90px;
   border-color: black;
   border-width: 0px;
-  background-image: linear-gradient(142deg, #8C51D6 0%, #DE8B5D 43%);
+  /* background-image: linear-gradient(142deg, #8C51D6 0%, #DE8B5D 43%); */
 }
 .svg-tip {
   padding: 10px;
@@ -37,4 +57,11 @@
   content: " ";
   border: 5px solid transparent;
   border-top-color: rgba(0,0,0,0.8);
-} */
+}
+.text {
+    color: rgba(255, 255, 255, 0.588);
+    font-family: 'Inter', sans-serif;
+    font-size: 1em;
+    line-height: 1.875;
+    font-weight: 400;
+}

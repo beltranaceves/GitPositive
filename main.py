@@ -65,8 +65,6 @@ def getCurrentUserCount():
       emails.append(emailInfo['email'])
   g.user.github_emails = emails
   repo_count = getRepositoryCountByUsername(g.user, github)
-  app.logger.info("WE WORK")
-  print(g)
   return repo_count
   
 class User(Base):
@@ -85,7 +83,7 @@ class User(Base):
 def before_request():
     g.user = None
     if 'user_id' in session:
-        g.user = User.query.get(session['user_id'])
+        g.user = db_session.get(User, session['user_id'])
 
 
 @app.after_request
@@ -106,10 +104,10 @@ def log_to_file(message):
 # Usage example:
 @app.route('/')
 def index():
-    return render_template('index.html')
     if g.user:
         log_to_file(f"User {g.user.github_login} accessed homepage")
         repo_count = getCurrentUserCount()
+        print("username: " + g.user.github_login + " repo count: " + str(repo_count))
         return render_template('dashboard.html', username = g.user.github_login, repo_count = repo_count)
     else:
         return render_template('index.html')
@@ -121,17 +119,18 @@ def contributions():
     global cache_commits
     if g.user:
       # Handle error when g.user is not logged in
-      if not cache_commits:
-        print("not using cache")
+    #   if not cache_commits:
+        # print("not using cache")
         commits = getCurrentUserCommits()
         cache_commits = commits
-      else:
-        print("using cache")
-        commits = cache_commits     
+    #   else:
+    #     print("using cache")
+    #     commits = cache_commits     
     
-      commit_count = commits.pop()
-      analyzed_commits = analyzeCommits(commits)
-      return render_template('contributions.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = commit_count["total"], commits = analyzed_commits)
+        commit_count = commits.pop()
+        analyzed_commits = analyzeCommits(commits)
+        print(commit_count)
+        return render_template('contributions.html', username = g.user.github_login, title = "Default title", trait_desc = "You are the most true neutral dev in the world", commit_count = commit_count["total"], commits = analyzed_commits)
     else:
       return render_template('index.html')
 
