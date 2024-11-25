@@ -94,3 +94,4 @@ db/
 db
 *.db
 db/github-flask.db
+db/github-flask.db
